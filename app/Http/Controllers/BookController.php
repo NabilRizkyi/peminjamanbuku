@@ -21,7 +21,7 @@ class BookController extends Controller
                   ->orWhere('penulis', 'like', "%{$search}%");
         })->latest()->get();
 
-        return view('siswa.dashboard', compact('books', 'search'));
+        return view('anggota.dashboard', compact('books', 'search'));
     }
 
 
@@ -106,10 +106,8 @@ class BookController extends Controller
             ->with('success', 'Buku berhasil diupdate');
     }
 
+    // DELETE + HAPUS COVER
 
-    // ==========================
-    // ❌ DELETE + HAPUS COVER
-    // ==========================
     public function destroy(Book $book) // ✅ binding
     {
         if ($book->cover && Storage::disk('public')->exists($book->cover)) {
@@ -123,13 +121,12 @@ class BookController extends Controller
     }
 
 
-    // ==========================
-    // 📖 DETAIL BUKU (SISWA)
-    // ==========================
+    // DETAIL BUKU (SISWA)
+
    public function show(Book $book)
 {
-    if (auth()->user()->role === 'siswa') {
-        return view('siswa.detail', compact('book'));
+    if (auth()->user()->role === 'anggota') {
+        return view('anggota.detail', compact('book'));
     }
 
     return view('books.show', compact('book'));

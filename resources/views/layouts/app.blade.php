@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     {{-- Phosphor Icons --}}
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         :root {
@@ -529,11 +530,11 @@
             </a>
         @endif
 
-        @if(auth()->user()->role === 'siswa')
+        @if(auth()->user()->role === 'anggota')
             <div class="nav-section-label">Peminjaman</div>
 
-            <a href="{{ route('siswa.dashboard') }}"
-               class="nav-link-item {{ request()->routeIs('siswa.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('anggota.dashboard') }}"
+               class="nav-link-item {{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
                 <i class="ph-duotone ph-book-bookmark"></i>
                 Katalog Buku
             </a>

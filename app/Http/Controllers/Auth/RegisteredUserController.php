@@ -31,7 +31,8 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,siswa'], // 🔥 FIX
+            'no_hp' => ['required', 'string', 'max:20'],
+            'alamat' => ['required', 'string'],
         ]);
 
         // ✅ SIMPAN USER
@@ -39,7 +40,9 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role, // 🔥 FIX UTAMA
+            'role' => 'anggota', // ✅ DI SINI TEMPATNYA
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
         ]);
 
         event(new Registered($user));

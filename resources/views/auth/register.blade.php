@@ -273,6 +273,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+            
 
             <div class="mb-3">
                 <label class="form-label">
@@ -287,14 +288,27 @@
 
             <div class="mb-3">
                 <label class="form-label">
-                    <i class="bi bi-person-badge me-1" style="color:#2563eb;"></i>
-                    Daftar Sebagai
+                    <i class="bi bi-lock me-1" style="color:#2563eb;"></i>
+                    No HP
                 </label>
-                <select name="role" class="form-select">
-                    <option value="siswa" {{ old('role') == 'siswa' ? 'selected' : '' }}>Siswa</option>
-                    <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                </select>
+                <input type="text" name="no_hp"
+                       class="form-control"
+                       placeholder="Masukkan No Telepon"
+                       required>
             </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="bi bi-lock me-1" style="color:#2563eb;"></i>
+                    Alamat
+                </label>
+                <textarea name="alamat"
+                       class="form-control"
+                       placeholder="Masukkan Alamat"
+                       required>
+                </textarea>
+            </div>
+            
 
             <button type="submit" class="btn-register">
                 <i class="bi bi-person-plus me-2"></i>Daftar Sekarang

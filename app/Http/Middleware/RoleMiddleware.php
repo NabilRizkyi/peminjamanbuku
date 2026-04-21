@@ -9,21 +9,17 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, $role)
     {
-        // kalau belum login
         if (!auth()->check()) {
             return redirect('/login');
         }
 
-        // kalau role tidak sesuai
         if (auth()->user()->role != $role) {
 
-            // ⛔ JANGAN ke dashboard (biar ga loop)
-            // ✅ arahkan langsung sesuai role
             if (auth()->user()->role === 'admin') {
-                return redirect()->route('books.index');
+                return redirect('/admin/dashboard');
             }
 
-            return redirect()->route('siswa.dashboard');
+            return redirect('/anggota');
         }
 
         return $next($request);

@@ -36,11 +36,11 @@
 
 
                     {{-- ================= SISWA ================= --}}
-                    @if(auth()->user()->role === 'siswa')
+                    @if(auth()->user()->role === 'anggota')
 
                         <x-nav-link 
-                            :href="route('siswa.dashboard')" 
-                            :active="request()->routeIs('siswa.dashboard')">
+                            :href="route('anggota.dashboard')" 
+                            :active="request()->routeIs('anggota.dashboard')">
                             Dashboard
                         </x-nav-link>
 
@@ -126,11 +126,11 @@
 
 
             {{-- ================= SISWA ================= --}}
-            @if(auth()->user()->role === 'siswa')
+            @if(auth()->user()->role === 'anggota')
 
                 <x-responsive-nav-link 
-                    :href="route('siswa.dashboard')" 
-                    :active="request()->routeIs('siswa.dashboard')">
+                    :href="route('anggota.dashboard')" 
+                    :active="request()->routeIs('anggota.dashboard')">
                     Dashboard
                 </x-responsive-nav-link>
 

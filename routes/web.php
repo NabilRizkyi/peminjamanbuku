@@ -18,7 +18,7 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('admin.dashboard');
     }
 
-    return redirect()->route('siswa.dashboard');
+    return redirect()->route('anggota.dashboard');
 
 })->name('dashboard');
 
@@ -43,16 +43,26 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/peminjaman', [AdminBorrowingController::class, 'index'])
             ->name('admin.borrowings');
 
+        Route::get('/peminjam/{user}', [AdminBorrowingController::class, 'showUser'])
+            ->name('admin.user.show');
+
         Route::post('/peminjaman/{borrowing}/return', [AdminBorrowingController::class, 'return'])
             ->name('admin.return');
+
+         Route::post('/peminjaman/{id}/approve', [AdminBorrowingController::class, 'approve'])
+            ->name('admin.approve');
+
+        Route::post('/validasi-token', [AdminBorrowingController::class, 'validasiToken'])
+            ->name('admin.validasi.token');
+
     });
 
 
     // ================= SISWA =================
-    Route::middleware(['role:siswa'])->group(function () {
+    Route::middleware(['role:anggota'])->group(function () {
 
-        Route::get('/siswa', [BookController::class, 'dashboard'])
-            ->name('siswa.dashboard');
+        Route::get('/anggota', [BookController::class, 'dashboard'])
+            ->name('anggota.dashboard');
 
         Route::get('/buku/{book}', [BookController::class, 'show'])
             ->name('buku.detail');

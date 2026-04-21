@@ -14,15 +14,20 @@ class Borrowing extends Model
         'tanggal_kembali_rencana',
         'durasi',
         'status',
-        'denda'
+        'denda',
+        'token',
+        'token_expired_at', // ✅ WAJIB DITAMBAH
+        'token_used',       // ✅ optional tapi penting
     ];
 
     protected $casts = [
         'tanggal_pinjam' => 'datetime',
         'tanggal_kembali' => 'datetime',
-        'tanggal_kembali_rencana' => 'datetime',
+        'token_expired_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
+    // RELASI
     public function user()
     {
         return $this->belongsTo(User::class);
