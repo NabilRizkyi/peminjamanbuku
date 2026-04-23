@@ -26,49 +26,53 @@ class ProfileController extends Controller
      * Update profile
      */
     public function update(Request $request): RedirectResponse
-    {
-        $user = $request->user();
+{
+    $user = $request->user();
 
-        // 🔒 Validasi
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'password' => 'nullable|confirmed|min:6',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+    // 🔒 Validasi
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'no_hp' => 'nullable|string|max:15',
+        'alamat' => 'nullable|string|max:255',
+        'password' => 'nullable|confirmed|min:6',
+        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        // ✏️ Update data
-        $user->name = $request->name;
-        $user->email = $request->email;
+    // ✏️ Update data
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->no_hp = $request->no_hp;
+    $user->alamat = $request->alamat;
 
-        // 🔄 Reset verifikasi kalau email berubah
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
-        // 🔐 Update password (opsional)
-        if ($request->password) {
-            $user->password = Hash::make($request->password);
-        }
-
-        // 📸 Upload foto
-        if ($request->hasFile('photo')) {
-
-            // hapus foto lama
-            if ($user->photo) {
-                Storage::delete('public/' . $user->photo);
-            }
-
-            // simpan foto baru
-            $path = $request->file('photo')->store('profile', 'public');
-            $user->photo = $path;
-        }
-
-        $user->save();
-
-        return Redirect::route('profile.edit')
-            ->with('status', 'Profile berhasil diupdate!');
+    // 🔄 Reset verifikasi kalau email berubah
+    if ($user->isDirty('email')) {
+        $user->email_verified_at = null;
     }
+
+    // 🔐 Update password (opsional)
+    if ($request->password) {
+        $user->password = Hash::make($request->password);
+    }
+
+    // 📸 Upload foto
+    if ($request->hasFile('photo')) {
+
+        // hapus foto lama
+        if ($user->photo) {
+            Storage::delete('public/' . $user->photo);
+        }
+
+        // simpan foto baru
+        $path = $request->file('photo')->store('profile', 'public');
+        $user->photo = $path;
+    }
+
+    $user->save();
+
+    return Redirect::route('profile.edit')
+        ->with('status', 'Profile berhasil diupdate!');
+}
 
     /**
      * Hapus akun

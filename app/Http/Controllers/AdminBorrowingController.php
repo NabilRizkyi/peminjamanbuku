@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Borrowing;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class AdminBorrowingController extends Controller
@@ -91,6 +92,35 @@ public function validasiToken(Request $request)
     ]);
 
     return back()->with('success', 'Token valid, buku boleh diambil');
+}
+
+    public function laporan(Request $request)
+{
+    $bulan = $request->bulan ?? date('m');
+    $tahun = $request->tahun ?? date('Y');
+
+    $borrowings = Borrowing::with(['user', 'book'])
+        ->whereMonth('tanggal_pinjam', $bulan)
+        ->whereYear('tanggal_pinjam', $tahun)
+        ->latest()
+        ->get();
+
+    return view('admin.laporan.index', compact('borrowings', 'bulan', 'tahun'));
+}
+
+public function exportPdf(Request $request)
+{
+    $bulan = $request->bulan ?? date('m');
+    $tahun = $request->tahun ?? date('Y');
+
+    $borrowings = Borrowing::with(['user', 'book'])
+        ->whereMonth('tanggal_pinjam', $bulan)
+        ->whereYear('tanggal_pinjam', $tahun)
+        ->get();
+
+    $pdf = Pdf::loadView('admin.laporan.pdf', compact('borrowings', 'bulan', 'tahun'));
+
+    return $pdf->download('laporan-peminjaman.pdf');
 }
 
 }

@@ -5,74 +5,108 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Borrowing;
 use App\Models\Book;
-use App\Models\User; // ✅ HARUS DI SINI
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class BorrowingController extends Controller
 {
+    // =========================
+    // LIST DATA
+    // =========================
     public function index()
     {
-        $borrowings = Borrowing::with('book')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->get();
-
-        return view('anggota.riwayat', compact('borrowings'));
-    }
-
-    public function store(Request $request, $id)
-    {
-        $request->validate([
-            'durasi' => 'required|integer|min:1|max:30'
-        ]);
-
-        $book = Book::findOrFail($id);
-
-        if ($book->stok <= 0) {
-            return back()->with('error', 'Stok habis!');
+        // ✅ AMBIL DATA + PAGINATION
+        if (Auth::user()->role == 'admin') {
+            $borrowings = Borrowing::with(['user', 'book'])
+                ->latest()
+                ->paginate(10);
+        } else {
+            $borrowings = Borrowing::with(['book'])
+                ->where('user_id', Auth::id())
+                ->latest()
+                ->paginate(10);
         }
 
-        $durasi = (int) $request->durasi;
+        // ✅ AUTO DENDA (HANYA YANG MASIH DIPINJAM)
+        foreach ($borrowings as $item) {
 
-        $tanggal_pinjam = Carbon::now();
-        $tanggal_kembali = Carbon::now()->addDays($durasi);
+            if ($item->status != 'dipinjam') {
+                continue;
+            }
 
-        Borrowing::create([
-            'user_id' => auth()->id(),
-            'book_id' => $book->id,
-            'tanggal_pinjam' => $tanggal_pinjam,
-            'tanggal_kembali' => $tanggal_kembali,
-            'durasi' => $durasi,
-            'status' => 'menunggu'
-        ]);
+            $today = Carbon::today();
+            $dueDate = Carbon::parse($item->tanggal_kembali);
 
-        return back()->with('success', 'Buku berhasil dipinjam!');
+            $lateDays = $dueDate->diffInDays($today, false);
+
+            if ($lateDays > 0) {
+                $denda = $lateDays * 1000;
+
+                if ($item->denda != $denda) {
+                    $item->update([
+                        'denda' => $denda
+                    ]);
+                }
+            }
+        }
+
+        // ✅ RETURN VIEW (HARUS DI LUAR FOREACH)
+        if (Auth::user()->role == 'admin') {
+            return view('admin.borrowings.index', compact('borrowings'));
+        } else {
+            return view('anggota.riwayat', compact('borrowings'));
+        }
     }
 
-    public function return($id)
+    // =========================
+    // PINJAM BUKU
+    // =========================
+    public function store(Request $request)
+    {
+        $request->validate([
+            'book_id' => 'required|exists:books,id'
+        ]);
+
+        Borrowing::create([
+            'user_id' => Auth::id(),
+            'book_id' => $request->book_id,
+            'tanggal_pinjam' => Carbon::today(),
+            'tanggal_kembali' => Carbon::today()->addDays(3),
+            'status' => 'dipinjam',
+            'denda' => 0
+        ]);
+
+        return redirect()->back()->with('success', 'Buku berhasil dipinjam');
+    }
+
+    // =========================
+    // KEMBALIKAN BUKU
+    // =========================
+    public function kembalikan($id)
     {
         $borrowing = Borrowing::findOrFail($id);
 
-        if ($borrowing->status === 'dikembalikan') {
-            return back()->with('error', 'Sudah dikembalikan');
+        // ❗ JANGAN PROSES LAGI KALAU SUDAH DIKEMBALIKAN
+        if ($borrowing->status == 'dikembalikan') {
+            return back()->with('error', 'Buku sudah dikembalikan');
         }
 
-        $hari = now()->diffInDays($borrowing->tanggal_pinjam);
+        $today = Carbon::today();
+        $dueDate = Carbon::parse($borrowing->tanggal_kembali);
 
-        $denda = 0;
-        if ($hari > 3) {
-            $denda = ($hari - 3) * 1000;
+        $lateDays = $dueDate->diffInDays($today, false);
+
+        if ($lateDays > 0) {
+            $denda = $lateDays * 1000;
+        } else {
+            $denda = 0;
         }
 
         $borrowing->update([
             'status' => 'dikembalikan',
-            'tanggal_kembali' => now(),
             'denda' => $denda
         ]);
 
-        $borrowing->book->increment('stok');
-
-        return back()->with('success', 'Buku berhasil dikembalikan');
+        return redirect()->back()->with('success', 'Buku dikembalikan');
     }
-
 }

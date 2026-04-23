@@ -217,6 +217,12 @@
         </div>
     </div>
 
+    @if(session('success'))
+    <div class="alert alert-warning">
+        {{ session('success') }}
+    </div>
+@endif
+
     {{-- MAIN FORM --}}
     <div class="auth-main">
 

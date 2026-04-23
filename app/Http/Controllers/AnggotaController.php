@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class AnggotaController extends Controller
 {
@@ -31,7 +32,7 @@ class AnggotaController extends Controller
         $anggota->update([
             'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone
+            'no_hp' => $request->no_hp
         ]);
 
         return redirect()->route('anggota.index')

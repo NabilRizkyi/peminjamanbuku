@@ -221,6 +221,10 @@
             transition: all 0.18s ease;
         }
 
+        .btn-sm {
+    border-radius: 8px;
+}
+
         .btn-logout:hover {
             background: rgba(239, 68, 68, 0.2);
             color: #f87171;
@@ -381,6 +385,10 @@
             background: #f8fafc;
         }
 
+        .table td {
+    vertical-align: middle;
+}
+
         /* ── BADGES ── */
         .badge {
             font-size: 11px;
@@ -536,6 +544,13 @@
     <i class="ph-duotone ph-users"></i>
     Kelola Anggota
 </a>
+
+<a href="{{ route('admin.laporan') }}"
+   class="nav-link-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
+    <i class="ph-duotone ph-chart-bar"></i>
+    Report
+</a>
+
         @endif
 
         @if(auth()->user()->role === 'anggota')

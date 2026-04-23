@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\AdminBorrowingController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
@@ -15,16 +17,23 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', function () {
 
-    if (auth()->user()->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    }
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
 
-    return redirect()->route('anggota.dashboard');
+        return redirect()->route('anggota.dashboard');
 
-})->name('dashboard');
+    Route::get('/peminjaman', [BorrowingController::class, 'index'])->name('peminjaman');
+
+    Route::post('/pinjam', [BorrowingController::class, 'store'])->name('pinjam');
+
+    Route::post('/kembalikan/{id}', [BorrowingController::class, 'kembalikan'])
+        ->name('kembalikan');
+
+    })->name('dashboard');
 
 
-    // PROFILE
+    // ================= PROFILE =================
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -34,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
 
         Route::get('/admin/dashboard', [BookController::class, 'adminDashboard'])
-        ->name('admin.dashboard');
+            ->name('admin.dashboard');
 
         Route::resource('books', BookController::class);
 
@@ -56,16 +65,30 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/validasi-token', [AdminBorrowingController::class, 'validasiToken'])
             ->name('admin.validasi.token');
 
+        Route::post('/anggota/{id}/approve', [UserController::class, 'approve'])
+            ->name('anggota.approve');
+
+
+        // ================= ANGGOTA MANAGEMENT =================
         Route::get('/admin/anggota', [UserController::class, 'index'])->name('anggota.index');
         Route::get('/admin/anggota/create', [UserController::class, 'create'])->name('anggota.create');
-        Route::get('/anggota/{id}/edit', [AnggotaController::class, 'edit'])->name('anggota.edit');
-        Route::put('/anggota/{id}', [AnggotaController::class, 'update'])->name('anggota.update');
         Route::post('/admin/anggota/store', [UserController::class, 'store'])->name('anggota.store');
         Route::delete('/admin/anggota/{id}', [UserController::class, 'destroy'])->name('anggota.destroy');
+
+        Route::get('/admin/anggota/{id}/edit', [AnggotaController::class, 'edit'])->name('anggota.edit');
+        Route::put('/admin/anggota/{id}', [AnggotaController::class, 'update'])->name('anggota.update');
+
+
+        // ================= LAPORAN =================
+        Route::get('/admin/laporan', [LaporanController::class, 'index'])
+            ->name('admin.laporan');
+
+        Route::get('/admin/laporan/pdf', [LaporanController::class, 'exportPdf'])
+            ->name('laporan.pdf');
     });
 
 
-    // ================= SISWA =================
+    // ================= ANGGOTA =================
     Route::middleware(['role:anggota'])->group(function () {
 
         Route::get('/anggota', [BookController::class, 'dashboard'])
@@ -80,8 +103,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/pinjam/{book}', [BorrowingController::class, 'store'])
             ->name('pinjam');
 
-        Route::post('/kembalikan/{borrowing}', [BorrowingController::class, 'return'])
-            ->name('kembalikan');
+        // ✅ FIX UTAMA
+        Route::post('/kembalikan/{id}', [BorrowingController::class, 'kembalikan'])
+            ->name('anggota.kembalikan');
     });
 
 });

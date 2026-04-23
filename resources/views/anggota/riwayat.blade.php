@@ -117,13 +117,12 @@
                         {{-- AKSI --}}
                         <td>
                             @if($item->status == 'dipinjam')
-                                <form action="/kembalikan/{{ $item->id }}" method="POST"
-                                      onsubmit="return confirm('Yakin mau kembalikan buku ini?')">
-                                    @csrf
-                                    <button class="btn btn-success btn-sm">
-                                        Kembalikan
-                                    </button>
-                                </form>
+                                <form action="{{ route('anggota.kembalikan', $item->id) }}" method="POST">
+    @csrf
+    <button type="submit" class="btn btn-success">
+        Kembalikan
+    </button>
+</form>
 
                             @elseif($item->status == 'menunggu')
                                 <span class="text-muted">Menunggu approval</span>

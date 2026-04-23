@@ -9,11 +9,23 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     // ✅ LIST ANGGOTA
-    public function index()
-    {
-        $users = User::where('role', 'anggota')->latest()->get();
-        return view('admin.anggota.index', compact('users'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->search;
+
+    $users = User::where('role', 'anggota')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('no_hp', 'like', "%{$search}%");
+            });
+        })
+        ->latest()
+        ->get();
+
+    return view('admin.anggota.index', compact('users', 'search'));
+}
 
     // ✅ FORM TAMBAH
     public function create()
@@ -59,4 +71,13 @@ class UserController extends Controller
 
         return back()->with('success', 'Anggota berhasil dihapus');
     }
+
+    public function approve($id)
+{
+    $user = User::findOrFail($id);
+    $user->status = 'approved';
+    $user->save();
+
+    return back()->with('success', 'Anggota disetujui!');
+}
 }

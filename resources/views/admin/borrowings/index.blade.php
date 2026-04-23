@@ -133,10 +133,14 @@
 
                         {{-- DENDA --}}
                         <td>
-                            <span style="color:{{ $item->denda > 0 ? 'red' : 'green' }}">
-                                Rp {{ number_format($item->denda) }}
-                            </span>
-                        </td>
+    @if($item->denda > 0)
+        <span class="text-danger fw-bold">
+            Rp {{ number_format($item->denda, 0, ',', '.') }}
+        </span>
+    @else
+        <span class="text-success">Gratis</span>
+    @endif
+</td>
 
                         {{-- AKSI --}}
                         <td>

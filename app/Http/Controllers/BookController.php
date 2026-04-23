@@ -19,7 +19,7 @@ class BookController extends Controller
         $books = Book::when($search, function ($query, $search) {
             $query->where('judul', 'like', "%{$search}%")
                   ->orWhere('penulis', 'like', "%{$search}%");
-        })->latest()->get();
+        })->paginate(10);
 
         return view('anggota.dashboard', compact('books', 'search'));
     }
@@ -28,11 +28,23 @@ class BookController extends Controller
     // ==========================
     // 📚 ADMIN CRUD
     // ==========================
-    public function index()
-    {
-        $books = Book::latest()->get();
-        return view('books.index', compact('books'));
+    public function index(Request $request)
+{
+    $query = Book::query();
+
+    // SEARCH
+    if ($request->search) {
+        $query->where(function ($q) use ($request) {
+            $q->where('judul', 'like', '%' . $request->search . '%')
+              ->orWhere('penulis', 'like', '%' . $request->search . '%');
+        });
     }
+
+    // PAGINATION + KEEP SEARCH PARAM
+    $books = $query->latest()->paginate(10)->withQueryString();
+
+    return view('books.index', compact('books'));
+}
 
     public function create()
     {
@@ -48,6 +60,8 @@ class BookController extends Controller
         $validated = $request->validate([
             'judul' => 'required',
             'penulis' => 'required',
+            'genre' => 'required',
+            'penerbit' => 'nullable',
             'deskripsi' => 'nullable',
             'stok' => 'required|integer',
             'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
@@ -81,6 +95,8 @@ class BookController extends Controller
         $validated = $request->validate([
             'judul' => 'required',
             'penulis' => 'required',
+            'genre' => 'required',
+            'penerbit' => 'nullable',
             'deskripsi' => 'nullable',
             'stok' => 'required|integer',
             'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
@@ -148,6 +164,21 @@ public function adminDashboard()
         'totalSelesai',
         'recentBooks'
     ));
+}
+
+public function anggota(Request $request)
+{
+    $query = Book::query();
+
+    // fitur search (opsional kalau sudah ada di UI)
+    if ($request->search) {
+        $query->where('judul', 'like', '%' . $request->search . '%')
+              ->orWhere('penulis', 'like', '%' . $request->search . '%');
+    }
+
+    $books = $query->latest()->paginate(10);
+
+    return view('anggota.katalog', compact('books'));
 }
 
 }

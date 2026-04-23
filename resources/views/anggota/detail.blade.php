@@ -48,10 +48,20 @@
                     {{ $book->judul }}
                 </h2>
 
-                <div style="font-size:14px; color:#64748b; margin-bottom:20px;">
-                    <i class="bi bi-person-fill me-1"></i>
-                    Penulis: <strong style="color:#0f172a;">{{ $book->penulis }}</strong>
-                </div>
+                <div style="font-size:14px; color:#64748b; margin-bottom:6px;">
+    <i class="bi bi-person-fill me-1"></i>
+    Penulis: <strong style="color:#0f172a;">{{ $book->penulis }}</strong>
+</div>
+
+<div style="font-size:14px; color:#64748b; margin-bottom:6px;">
+    <i class="bi bi-building me-1"></i>
+    Penerbit: <strong style="color:#0f172a;">{{ $book->penerbit ?? '-' }}</strong>
+</div>
+
+<div style="font-size:14px; color:#64748b; margin-bottom:20px;">
+    <i class="bi bi-tags me-1"></i>
+    Genre: <strong style="color:#0f172a;">{{ $book->genre ?? '-' }}</strong>
+</div>
 
                 <hr style="border-color:#f1f5f9; margin:20px 0;">
 

@@ -165,6 +165,15 @@
             text-decoration: none;
         }
 
+        .alert-success {
+    border-radius: 10px !important;
+    border: none !important;
+    background: #ecfdf5 !important;
+    color: #065f46 !important;
+    border-left: 4px solid #10b981 !important;
+    font-size: 13px;
+}
+
         .auth-link a:hover { text-decoration: underline; }
 
         .alert-danger {
@@ -209,6 +218,12 @@
             © {{ date('Y') }} Library. Semua hak dilindungi.
         </div>
     </div>
+
+    @if(session('success'))
+    <div class="alert alert-success mb-3">
+        {{ session('success') }}
+    </div>
+@endif
 
     {{-- FORM --}}
     <div class="auth-main">
@@ -288,7 +303,7 @@
 
             <div class="mb-3">
                 <label class="form-label">
-                    <i class="bi bi-lock me-1" style="color:#2563eb;"></i>
+                    <i class="bi bi-telephone me-1" style="color:#2563eb;"></i>
                     No HP
                 </label>
                 <input type="text" name="no_hp"
@@ -299,14 +314,14 @@
 
             <div class="mb-3">
                 <label class="form-label">
-                    <i class="bi bi-lock me-1" style="color:#2563eb;"></i>
+                    <i class="bi bi-geo-alt me-1" style="color:#2563eb;"></i>
                     Alamat
                 </label>
                 <textarea name="alamat"
-                       class="form-control"
-                       placeholder="Masukkan Alamat"
-                       required>
-                </textarea>
+    class="form-control"
+    placeholder="Masukkan alamat lengkap"
+    rows="3"
+    required>{{ old('alamat') }}</textarea>
             </div>
             
 
@@ -321,6 +336,16 @@
             <a href="{{ route('login') }}">Masuk di sini</a>
         </div>
 
+       <div style="
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:12px;
+    border-radius:10px;
+    font-size:13px;
+    margin-top:16px;
+">
+    ℹ️ Setelah daftar, akun kamu harus disetujui admin terlebih dahulu.
+</div>
     </div>
 </div>
 
