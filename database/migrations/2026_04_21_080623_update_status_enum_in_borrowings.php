@@ -6,30 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('borrowings', function (Blueprint $table) {
-             DB::statement("
-        ALTER TABLE borrowings 
-        MODIFY status ENUM('menunggu','dipinjam','dikembalikan') 
-        DEFAULT 'menunggu'
-    ");
-        });
+        // Skipped: status column already defined in create_borrowings_table
+        // MODIFY syntax is MySQL-only, not compatible with PostgreSQL
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('borrowings', function (Blueprint $table) {
-             DB::statement("
-        ALTER TABLE borrowings 
-        MODIFY status ENUM('dipinjam','dikembalikan')
-    ");
-        });
+        //
     }
 };
