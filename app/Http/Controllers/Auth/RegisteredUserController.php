@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -25,27 +24,29 @@ class RegisteredUserController extends Controller
      * Handle register
      */
     public function store(Request $request): RedirectResponse
-{
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        'password' => ['required', 'confirmed', 'min:6'],
-        'no_hp' => ['required', 'regex:/^[0-9+]+$/'],
-        'alamat' => ['required', 'string'],
-    ]);
+    {
+        $request->validate([
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', 'min:6'],
+            'no_hp'    => ['required', 'regex:/^[0-9+]+$/'],
+            'alamat'   => ['required', 'string'],
+        ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => bcrypt($request->password),
-        'no_hp' => $request->no_hp,
-        'alamat' => $request->alamat,
-        'status' => 'pending', 
-    ]);
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => bcrypt($request->password),
+            'no_hp'    => $request->no_hp,
+            'alamat'   => $request->alamat,
+            'role'     => 'anggota',
+            // status tidak di-set, default langsung bisa login
+        ]);
 
-    event(new Registered($user));
+        event(new Registered($user));
 
-    return redirect()->route('login')
-        ->with('success', 'Registrasi berhasil! Tunggu approval admin.');
-}
+        Auth::login($user);
+
+        return redirect()->route('dashboard');
+    }
 }
