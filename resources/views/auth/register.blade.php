@@ -23,10 +23,11 @@
             padding: 24px;
         }
 
+        /* FIX 1: max-width dinaikkan agar sidebar tidak gepeng */
         .auth-wrapper {
             display: flex;
             width: 100%;
-            max-width: 500px;
+            max-width: 820px;
             background: white;
             border-radius: 20px;
             overflow: hidden;
@@ -34,10 +35,12 @@
             min-height: 540px;
         }
 
+        /* FIX 2: sidebar lebar tetap, tidak flex:1 */
         .auth-side {
-            flex: 1;
+            width: 300px;
+            min-width: 300px;
             background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
-            padding: 48px 40px;
+            padding: 48px 36px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -59,10 +62,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 22px;
             color: #ffffff;
             box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            backdrop-filter: blur(10px);
         }
 
         .auth-side-brand {
@@ -76,38 +78,40 @@
         }
 
         .auth-side-headline {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
             line-height: 1.35;
             margin: 0 0 12px;
         }
 
         .auth-side-desc {
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.8;
             line-height: 1.6;
         }
 
+        /* FIX 3: form area flex:1 dengan overflow scroll */
         .auth-main {
             flex: 1;
-            padding: 48px 40px;
+            padding: 40px 36px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             overflow-y: auto;
+            max-height: 100vh;
         }
 
         .auth-title {
             font-size: 22px;
             font-weight: 700;
             color: #0f172a;
-            margin: 0 0 6px;
+            margin: 0 0 4px;
         }
 
         .auth-subtitle {
             font-size: 13px;
             color: #64748b;
-            margin: 0 0 24px;
+            margin: 0 0 20px;
         }
 
         .form-label {
@@ -143,7 +147,7 @@
             font-family: 'Inter', sans-serif;
             cursor: pointer;
             transition: all 0.18s ease;
-            margin-top: 8px;
+            margin-top: 4px;
         }
 
         .btn-register:hover {
@@ -156,7 +160,7 @@
             font-size: 13px;
             text-align: center;
             color: #64748b;
-            margin-top: 20px;
+            margin-top: 16px;
         }
 
         .auth-link a {
@@ -165,16 +169,17 @@
             text-decoration: none;
         }
 
-        .alert-success {
-    border-radius: 10px !important;
-    border: none !important;
-    background: #ecfdf5 !important;
-    color: #065f46 !important;
-    border-left: 4px solid #10b981 !important;
-    font-size: 13px;
-}
-
         .auth-link a:hover { text-decoration: underline; }
+
+        /* FIX 4: alert konsisten border-radius & warna */
+        .alert-success {
+            border-radius: 10px !important;
+            border: none !important;
+            background: #ecfdf5 !important;
+            color: #065f46 !important;
+            border-left: 4px solid #10b981 !important;
+            font-size: 13px;
+        }
 
         .alert-danger {
             border-radius: 10px !important;
@@ -185,9 +190,45 @@
             font-size: 13px;
         }
 
+        /* FIX 5: info box pakai warna konsisten dengan --primary */
+        .auth-info-box {
+            background: #eff6ff;
+            color: #1e3a8a;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-top: 14px;
+            border-left: 4px solid #2563eb;
+            line-height: 1.5;
+        }
+
+        /* FIX 6: mobile — sembunyikan sidebar, tampilkan header kecil */
         @media (max-width: 640px) {
-            .auth-side { display: none; }
-            .auth-main { padding: 36px 24px; }
+            .auth-wrapper {
+                flex-direction: column;
+                max-width: 100%;
+            }
+
+            .auth-side {
+                width: 100%;
+                min-width: unset;
+                padding: 24px;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 14px;
+                min-height: unset;
+            }
+
+            .auth-side-headline,
+            .auth-side-desc,
+            .auth-side-footer {
+                display: none;
+            }
+
+            .auth-main {
+                padding: 28px 20px;
+            }
         }
     </style>
 </head>
@@ -214,18 +255,20 @@
             </div>
         </div>
 
-        <div style="font-size:12px; opacity:0.6;">
+        <div class="auth-side-footer" style="font-size:12px; opacity:0.6;">
             © {{ date('Y') }} Library. Semua hak dilindungi.
         </div>
     </div>
 
-    @if(session('success'))
-    <div class="alert alert-success mb-3">
-        {{ session('success') }}
-    </div>
-@endif
     {{-- FORM --}}
+    {{-- FIX 7: session success dipindah ke dalam .auth-main --}}
     <div class="auth-main">
+
+        @if(session('success'))
+            <div class="alert alert-success mb-3">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            </div>
+        @endif
 
         <div class="auth-title">Buat Akun Baru <i class="bi bi-pencil-square"></i></div>
         <div class="auth-subtitle">Isi data berikut untuk mendaftar</div>
@@ -287,7 +330,6 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            
 
             <div class="mb-3">
                 <label class="form-label">
@@ -310,7 +352,7 @@
                        pattern="^\+?[0-9]+$"
                        inputmode="numeric"
                        placeholder="Masukkan No Telepon"
-                        oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
+                       oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
                        required>
             </div>
 
@@ -320,12 +362,11 @@
                     Alamat
                 </label>
                 <textarea name="alamat"
-    class="form-control"
-    placeholder="Masukkan alamat lengkap"
-    rows="3"
-    required>{{ old('alamat') }}</textarea>
+                          class="form-control"
+                          placeholder="Masukkan alamat lengkap"
+                          rows="3"
+                          required>{{ old('alamat') }}</textarea>
             </div>
-            
 
             <button type="submit" class="btn-register">
                 <i class="bi bi-person-plus me-2"></i>Daftar Sekarang
@@ -338,16 +379,12 @@
             <a href="{{ route('login') }}">Masuk di sini</a>
         </div>
 
-       <div style="
-    background:#eff6ff;
-    color:#1e3a8a;
-    padding:12px;
-    border-radius:10px;
-    font-size:13px;
-    margin-top:16px;
-">
-    ℹ️ Setelah daftar, akun kamu harus disetujui admin terlebih dahulu.
-</div>
+        {{-- FIX 8: pakai class, bukan inline style hardcode --}}
+        <div class="auth-info-box">
+            <i class="bi bi-info-circle me-1"></i>
+            Setelah daftar, akun kamu harus disetujui admin terlebih dahulu.
+        </div>
+
     </div>
 </div>
 
