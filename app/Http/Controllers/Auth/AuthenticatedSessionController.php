@@ -25,6 +25,12 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+        $user = Auth::user();
+
+if ($user->role !== 'admin' && strtolower(trim($user->status)) !== 'approved') {
+    Auth::logout();
+    return back()->with('error', 'Akun belum disetujui admin');
+}
 
         $request->session()->regenerate();
 

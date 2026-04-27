@@ -25,30 +25,27 @@ class RegisteredUserController extends Controller
      * Handle register
      */
     public function store(Request $request): RedirectResponse
-    {
-        // ✅ VALIDASI
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'no_hp' => ['required', 'string', 'max:20'],
-            'alamat' => ['required', 'string'],
-        ]);
+{
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'confirmed', 'min:6'],
+        'no_hp' => ['required', 'regex:/^[0-9+]+$/'],
+        'alamat' => ['required', 'string'],
+    ]);
 
-        // ✅ SIMPAN USER
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'anggota', // ✅ DI SINI TEMPATNYA
-            'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
-        ]);
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        'no_hp' => $request->no_hp,
+        'alamat' => $request->alamat,
+        'status' => 'pending', 
+    ]);
 
-        event(new Registered($user));
+    event(new Registered($user));
 
-        Auth::login($user);
-
-        return redirect()->route('dashboard');
-    }
+    return redirect()->route('login')
+        ->with('success', 'Registrasi berhasil! Tunggu approval admin.');
+}
 }

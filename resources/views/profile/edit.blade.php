@@ -236,28 +236,21 @@
                     </div>
                 </div>
 
-                <div class="form-group-custom">
-                    <label class="form-label-custom">Foto Profil Baru</label>
-                    <div class="d-flex align-items-center gap-3">
-                        <img id="preview"
-                            src="{{ auth()->user()->photo 
-                                ? asset('storage/' . auth()->user()->photo) 
-                                : 'https://ui-avatars.com/api/?name=' . auth()->user()->name . '&background=random' }}"
-                            width="60"
-                            height="60"
-                            class="rounded-circle" style="object-fit:cover; border:2px solid #e2e8f0;">
-                        
-                        <div class="file-input-wrapper" style="width: 200px;">
-                            <div class="file-input-btn">
-                                <i class="ph-bold ph-upload-simple"></i> Unggah Foto
-                            </div>
-                            <input type="file" name="photo" accept="image/*" onchange="previewImage(event)">
-                        </div>
-                    </div>
-                    @error('photo')
-                        <small class="text-danger mt-1 d-block">{{ $message }}</small>
-                    @enderror
-                </div>
+                <div class="row mt-3">
+    <div class="col-md-6">
+        <label class="form-label">No HP</label>
+        <input type="text" name="no_hp" class="form-control-custom"
+            value="{{ old('no_hp', auth()->user()->no_hp) }}"
+            placeholder="Contoh: 08123456789">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Alamat</label>
+        <input type="text" name="alamat" class="form-control-custom"
+            value="{{ old('alamat', auth()->user()->alamat) }}"
+            placeholder="Alamat lengkap">
+    </div>
+</div>
 
                 <hr style="border-color: #f1f5f9; margin: 32px 0;">
 
@@ -283,6 +276,30 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Foto Profil Baru</label>
+                    <div class="d-flex align-items-center gap-3">
+                        <img id="preview"
+                            src="{{ auth()->user()->photo 
+                                ? asset('storage/' . auth()->user()->photo) 
+                                : 'https://ui-avatars.com/api/?name=' . auth()->user()->name . '&background=random' }}"
+                            width="60"
+                            height="60"
+                            class="rounded-circle" style="object-fit:cover; border:2px solid #e2e8f0;">
+                        
+                        <div class="file-input-wrapper" style="width: 200px;">
+                            <div class="file-input-btn">
+                                <i class="ph-bold ph-upload-simple"></i> Unggah Foto
+                            </div>
+                            <input type="file" name="photo" accept="image/*" onchange="previewImage(event)">
+                        </div>
+                    </div>
+                    @error('photo')
+                        <small class="text-danger mt-1 d-block">{{ $message }}</small>
+                    @enderror
+                </div>
+
 
                 <div class="mt-2 text-end">
                     <button type="submit" class="btn-gradient" style="width: auto; min-width: 200px;">

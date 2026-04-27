@@ -221,6 +221,10 @@
             transition: all 0.18s ease;
         }
 
+        .btn-sm {
+    border-radius: 8px;
+}
+
         .btn-logout:hover {
             background: rgba(239, 68, 68, 0.2);
             color: #f87171;
@@ -346,6 +350,10 @@
         .table tbody tr:hover td {
             background: #f8fafc;
         }
+
+        .table td {
+    vertical-align: middle;
+}
 
         /* ── BADGES ── */
         .badge {
@@ -496,7 +504,23 @@
                 <i class="ph-duotone ph-clipboard-text"></i>
                 Data Peminjaman
             </a>
+<<<<<<< HEAD
             
+=======
+
+            <a href="{{ route('anggota.index') }}"
+   class="nav-link-item {{ request()->routeIs('anggota.*') ? 'active' : '' }}">
+    <i class="ph-duotone ph-users"></i>
+    Kelola Anggota
+</a>
+
+<a href="{{ route('admin.laporan') }}"
+   class="nav-link-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
+    <i class="ph-duotone ph-chart-bar"></i>
+    Report
+</a>
+
+>>>>>>> 856d5ac925529bc4eaa6bd5b89b64563fe18f814
         @endif
 
         @if(auth()->user()->role === 'anggota')

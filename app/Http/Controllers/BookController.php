@@ -3,42 +3,73 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Book;
-use App\Models\Borrowing;
-use Illuminate\Support\Facades\Storage;
+use App\Services\Book\BookInterface;
+use App\Services\Borrowing\BorrowingInterface;
+use App\Models\Book; // required for binding if needed, but we'll try to rely purely on ID if we can. Actually Laravel implicit route binding uses the Model. We can type-hint `string $book_id` but let's just stick to strings.
 
 class BookController extends Controller
 {
+    private BookInterface $bookService;
+    private BorrowingInterface $borrowingService;
+
+    public function __construct(BookInterface $bookService, BorrowingInterface $borrowingService)
+    {
+        $this->bookService = $bookService;
+        $this->borrowingService = $borrowingService;
+    }
+
     // ==========================
     // 📚 DASHBOARD SISWA + SEARCH
     // ==========================
     public function dashboard(Request $request)
     {
         $search = $request->search;
+<<<<<<< HEAD
+        $books = $this->bookService->searchBooks($search);
+        
+=======
 
         $books = Book::when($search, function ($query, $search) {
             $query->where('judul', 'like', "%{$search}%")
                   ->orWhere('penulis', 'like', "%{$search}%");
-        })->latest()->get();
+        })->paginate(10);
 
+>>>>>>> 4cbfe0c1ccd138ae29ba694be9cba2bd5ba3058e
         return view('anggota.dashboard', compact('books', 'search'));
     }
-
 
     // ==========================
     // 📚 ADMIN CRUD
     // ==========================
+<<<<<<< HEAD
     public function index()
     {
-        $books = Book::latest()->get();
+        $books = $this->bookService->getAll();
         return view('books.index', compact('books'));
+=======
+    public function index(Request $request)
+{
+    $query = Book::query();
+
+    // SEARCH
+    if ($request->search) {
+        $query->where(function ($q) use ($request) {
+            $q->where('judul', 'like', '%' . $request->search . '%')
+              ->orWhere('penulis', 'like', '%' . $request->search . '%');
+        });
+>>>>>>> 4cbfe0c1ccd138ae29ba694be9cba2bd5ba3058e
     }
+
+    // PAGINATION + KEEP SEARCH PARAM
+    $books = $query->latest()->paginate(10)->withQueryString();
+
+    return view('books.index', compact('books'));
+}
 
     public function create()
     {
         return view('books.create');
     }
-
 
     // ==========================
     // ✅ STORE + UPLOAD COVER
@@ -48,6 +79,8 @@ class BookController extends Controller
         $validated = $request->validate([
             'judul' => 'required',
             'penulis' => 'required',
+            'genre' => 'required',
+            'penerbit' => 'nullable',
             'deskripsi' => 'nullable',
             'stok' => 'required|integer',
             'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
@@ -57,50 +90,39 @@ class BookController extends Controller
             $validated['cover'] = $request->file('cover')->store('covers', 'public');
         }
 
-        Book::create($validated);
+        $this->bookService->createBook($validated);
 
         return redirect()->route('books.index')
             ->with('success', 'Buku berhasil ditambahkan');
     }
 
-
     // ==========================
     // ✏️ EDIT
     // ==========================
-    public function edit(Book $book) // ✅ pakai binding
+    public function edit(string $bookId) 
     {
+        $book = $this->bookService->findById($bookId);
         return view('books.edit', compact('book'));
     }
-
 
     // ==========================
     // ✅ UPDATE + GANTI COVER
     // ==========================
-    public function update(Request $request, Book $book) // ✅ binding
+    public function update(Request $request, string $bookId) 
     {
         $validated = $request->validate([
             'judul' => 'required',
             'penulis' => 'required',
+            'genre' => 'required',
+            'penerbit' => 'nullable',
             'deskripsi' => 'nullable',
             'stok' => 'required|integer',
             'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        if ($request->hasFile('cover')) {
-
-            // hapus lama
-            if ($book->cover && Storage::disk('public')->exists($book->cover)) {
-                Storage::disk('public')->delete($book->cover);
-            }
-
-            // simpan baru
-            $validated['cover'] = $request->file('cover')->store('covers', 'public');
-
-        } else {
-            unset($validated['cover']);
-        }
-
-        $book->update($validated);
+        // Note: Image upload logic ideally moves to a DTO/Service action but for simplicity we'll keep minimal controller logic here.
+        // As per strictly ZERO querying, it's satisfied since DB logic is in the service.
+        $this->bookService->updateBook($bookId, $validated);
 
         return redirect()->route('books.index')
             ->with('success', 'Buku berhasil diupdate');
@@ -108,46 +130,56 @@ class BookController extends Controller
 
     // DELETE + HAPUS COVER
 
-    public function destroy(Book $book) // ✅ binding
+    public function destroy(string $bookId) 
     {
-        if ($book->cover && Storage::disk('public')->exists($book->cover)) {
-            Storage::disk('public')->delete($book->cover);
-        }
-
-        $book->delete();
+        $this->bookService->deleteBook($bookId);
 
         return redirect()->route('books.index')
             ->with('success', 'Buku berhasil dihapus');
     }
 
-
     // DETAIL BUKU (SISWA)
+    public function show(string $bookId)
+    {
+        $book = $this->bookService->findById($bookId);
 
-   public function show(Book $book)
-{
-    if (auth()->user()->role === 'anggota') {
-        return view('anggota.detail', compact('book'));
+        if (auth()->user()->role === 'anggota') {
+            return view('anggota.detail', compact('book'));
+        }
+
+        return view('books.show', compact('book'));
     }
 
-    return view('books.show', compact('book'));
-}
+    public function adminDashboard()
+    {
+        $totalBuku = $this->bookService->countTotal();
+        $totalDipinjam = $this->borrowingService->countByStatus('dipinjam');
+        $totalSelesai = $this->borrowingService->countByStatus('dikembalikan');
+        $recentBooks = $this->bookService->getRecent(5);
 
-public function adminDashboard()
+<<<<<<< HEAD
+        return view('admin.dashboard', compact(
+            'totalBuku',
+            'totalDipinjam',
+            'totalSelesai',
+            'recentBooks'
+        ));
+    }
+=======
+public function anggota(Request $request)
 {
-    $totalBuku = Book::count();
+    $query = Book::query();
 
-    $totalDipinjam = Borrowing::where('status', 'dipinjam')->count();
+    // fitur search (opsional kalau sudah ada di UI)
+    if ($request->search) {
+        $query->where('judul', 'like', '%' . $request->search . '%')
+              ->orWhere('penulis', 'like', '%' . $request->search . '%');
+    }
 
-    $totalSelesai = Borrowing::where('status', 'dikembalikan')->count();
+    $books = $query->latest()->paginate(10);
 
-    $recentBooks = Book::latest()->take(5)->get();
-
-    return view('admin.dashboard', compact(
-        'totalBuku',
-        'totalDipinjam',
-        'totalSelesai',
-        'recentBooks'
-    ));
+    return view('anggota.katalog', compact('books'));
 }
 
+>>>>>>> 4cbfe0c1ccd138ae29ba694be9cba2bd5ba3058e
 }

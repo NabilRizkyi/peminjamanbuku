@@ -32,6 +32,21 @@
                             Data Peminjaman
                         </x-nav-link>
 
+<<<<<<< HEAD
+=======
+                        <x-nav-link 
+                            :href="route('anggota.index')" 
+                            :active="request()->routeIs('anggota.*')">
+                            Kelola Anggota
+                        </x-nav-link>
+
+                        <x-nav-link 
+    :href="route('admin.laporan')" 
+    :active="request()->routeIs('admin.laporan')">
+    Report
+</x-nav-link>
+
+>>>>>>> 856d5ac925529bc4eaa6bd5b89b64563fe18f814
                     @endif
 
 
@@ -121,6 +136,21 @@
         Data Peminjaman
     </x-responsive-nav-link>
 
+<<<<<<< HEAD
+=======
+    <x-responsive-nav-link 
+        :href="route('anggota.index')" 
+        :active="request()->routeIs('anggota.*')">
+        Kelola Anggota
+    </x-responsive-nav-link>
+
+    <x-responsive-nav-link 
+        :href="route('admin.laporan')" 
+        :active="request()->routeIs('admin.laporan')">
+        Report
+    </x-responsive-nav-link>
+
+>>>>>>> 856d5ac925529bc4eaa6bd5b89b64563fe18f814
 @endif
 
 

@@ -3,6 +3,29 @@
 
 @section('content')
 
+<style>
+    .pagination {
+        gap: 6px;
+    }
+
+    .pagination .page-link {
+        border-radius: 8px !important;
+        border: none;
+        color: #334155;
+        padding: 6px 12px;
+        font-weight: 500;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .pagination .page-link:hover {
+        background: #e2e8f0;
+    }
+</style>
+
 {{-- PAGE HEADER --}}
 <div class="page-header">
     <div>
@@ -13,6 +36,19 @@
         <i class="bi bi-plus-lg me-2"></i>Tambah Buku
     </a>
 </div>
+
+{{-- SEARCH --}}
+<form method="GET" action="{{ route('books.index') }}" class="mb-4 d-flex gap-2">
+    <input type="text" name="search" class="form-control"
+        placeholder="Cari judul atau penulis..."
+        value="{{ request('search') }}">
+
+    <button class="btn btn-primary">Cari</button>
+
+    <a href="{{ route('books.index') }}" class="btn btn-secondary">
+        Reset
+    </a>
+</form>
 
 {{-- ALERT SUKSES --}}
 @if(session('success'))
@@ -91,6 +127,12 @@
         </div>
     </div>
     @endforelse
+</div>
+
+<div class="mt-5">
+    <div class="d-flex justify-content-center">
+        {{ $books->onEachSide(1)->links() }}
+    </div>
 </div>
 
 @endsection

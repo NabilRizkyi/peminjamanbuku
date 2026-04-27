@@ -6,25 +6,41 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('borrowings', function (Blueprint $table) {
-            $table->string('token')->nullable();
-            $table->timestamp('token_expired_at')->nullable();
-            $table->boolean('token_used')->default(false);
+
+            if (!Schema::hasColumn('borrowings', 'token')) {
+                $table->string('token')->nullable();
+            }
+
+            if (!Schema::hasColumn('borrowings', 'token_expired_at')) {
+                $table->timestamp('token_expired_at')->nullable();
+            }
+
+            if (!Schema::hasColumn('borrowings', 'token_used')) {
+                $table->boolean('token_used')->default(false);
+            }
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('borrowings', function (Blueprint $table) {
-            $table->dropColumn(['token', 'token_expired_at', 'token_used']);
+
+            if (Schema::hasColumn('borrowings', 'token')) {
+                $table->dropColumn('token');
+            }
+
+            if (Schema::hasColumn('borrowings', 'token_expired_at')) {
+                $table->dropColumn('token_expired_at');
+            }
+
+            if (Schema::hasColumn('borrowings', 'token_used')) {
+                $table->dropColumn('token_used');
+            }
+
         });
     }
 };

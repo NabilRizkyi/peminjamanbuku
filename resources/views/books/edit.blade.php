@@ -71,6 +71,10 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 856d5ac925529bc4eaa6bd5b89b64563fe18f814
                         <div class="col-md-6 mb-4">
                             <label class="form-label">
                                 <i class="bi bi-arrow-repeat me-1" style="color:#2563eb;"></i>
@@ -84,6 +88,35 @@
                             </small>
                         </div>
                     </div>
+
+                    {{-- ROW: Penerbit & Genre --}}
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <label class="form-label">
+            <i class="bi bi-building me-1" style="color:#2563eb;"></i>
+            Penerbit
+        </label>
+        <input type="text" name="penerbit"
+               class="form-control @error('penerbit') is-invalid @enderror"
+               value="{{ old('penerbit', $book->penerbit) }}">
+        @error('penerbit')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <label class="form-label">
+            <i class="bi bi-tags me-1" style="color:#2563eb;"></i>
+            Genre
+        </label>
+        <input type="text" name="genre"
+               class="form-control @error('genre') is-invalid @enderror"
+               value="{{ old('genre', $book->genre) }}">
+        @error('genre')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
 
                     {{-- DESKRIPSI --}}
                     <div class="mb-4">

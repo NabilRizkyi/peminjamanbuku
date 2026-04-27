@@ -24,7 +24,11 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             AdminSeeder::class,
+<<<<<<< HEAD
+            BookSeeder::class,
+=======
             AnggotaSeeder::class,
+>>>>>>> 4cbfe0c1ccd138ae29ba694be9cba2bd5ba3058e
         ]);
     }
 }
