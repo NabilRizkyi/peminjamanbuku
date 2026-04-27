@@ -3,123 +3,120 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\Book\BookInterface;
 use App\Services\Borrowing\BorrowingInterface;
-use App\Models\Borrowing;
-use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
+use App\Models\Book;
 
-class AdminBorrowingController extends Controller
+class BookController extends Controller
 {
+    private BookInterface $bookService;
     private BorrowingInterface $borrowingService;
 
-    public function __construct(BorrowingInterface $borrowingService)
+    public function __construct(BookInterface $bookService, BorrowingInterface $borrowingService)
     {
+        $this->bookService = $bookService;
         $this->borrowingService = $borrowingService;
     }
 
-    // =========================
-    // LIST SEMUA PEMINJAMAN
-    // =========================
-    public function index()
+    public function dashboard(Request $request)
     {
-        $borrowings = $this->borrowingService->getAllWithRelations();
-        return view('admin.borrowings.index', compact('borrowings'));
+        $search = $request->search;
+        $books = Book::when($search, function ($query, $search) {
+            $query->where('judul', 'like', "%{$search}%")
+                  ->orWhere('penulis', 'like', "%{$search}%");
+        })->paginate(10);
+        return view('anggota.dashboard', compact('books', 'search'));
     }
 
-    // =========================
-    // APPROVE + BUAT TOKEN
-    // =========================
-    public function approve(string $id)
+    public function index(Request $request)
     {
-        try {
-            $result = $this->borrowingService->approveBorrowing($id);
-            $token = $result['token'];
-            return back()->with('success', "Peminjaman disetujui. Token: {$token} (berlaku 24 jam).");
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+        $query = Book::query();
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('judul', 'like', '%' . $request->search . '%')
+                  ->orWhere('penulis', 'like', '%' . $request->search . '%');
+            });
         }
+        $books = $query->latest()->paginate(10)->withQueryString();
+        return view('books.index', compact('books'));
     }
 
-    // =========================
-    // VALIDASI TOKEN
-    // =========================
-    public function validasiToken(Request $request)
+    public function create()
     {
-        $request->validate([
-            'token' => 'required|string'
+        return view('books.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'judul'     => 'required',
+            'penulis'   => 'required',
+            'genre'     => 'required',
+            'penerbit'  => 'nullable',
+            'deskripsi' => 'nullable',
+            'stok'      => 'required|integer',
+            'cover'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
-
-        try {
-            $result = $this->borrowingService->validateToken($request->token);
-            $nama  = $result['nama'];
-            $judul = $result['judul'];
-            return back()->with('success', "✅ Token valid. Buku \"{$judul}\" boleh diambil oleh {$nama}.");
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+        if ($request->hasFile('cover')) {
+            $validated['cover'] = $request->file('cover')->store('covers', 'public');
         }
+        $this->bookService->createBook($validated);
+        return redirect()->route('books.index')->with('success', 'Buku berhasil ditambahkan');
     }
 
-    // =========================
-    // RETURN BUKU
-    // =========================
-    public function return(string $id)
+    public function edit(string $bookId)
     {
-        try {
-            $result = $this->borrowingService->returnBorrowing($id);
-            $denda = $result['denda'];
-            $dendaMsg = $denda > 0 ? " Denda: Rp " . number_format($denda) : '';
-            return back()->with('success', 'Buku berhasil dikembalikan.' . $dendaMsg);
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+        $book = $this->bookService->findById($bookId);
+        return view('books.edit', compact('book'));
+    }
+
+    public function update(Request $request, string $bookId)
+    {
+        $validated = $request->validate([
+            'judul'     => 'required',
+            'penulis'   => 'required',
+            'genre'     => 'required',
+            'penerbit'  => 'nullable',
+            'deskripsi' => 'nullable',
+            'stok'      => 'required|integer',
+            'cover'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ]);
+        $this->bookService->updateBook($bookId, $validated);
+        return redirect()->route('books.index')->with('success', 'Buku berhasil diupdate');
+    }
+
+    public function destroy(string $bookId)
+    {
+        $this->bookService->deleteBook($bookId);
+        return redirect()->route('books.index')->with('success', 'Buku berhasil dihapus');
+    }
+
+    public function show(string $bookId)
+    {
+        $book = $this->bookService->findById($bookId);
+        if (auth()->user()->role === 'anggota') {
+            return view('anggota.detail', compact('book'));
         }
+        return view('books.show', compact('book'));
     }
 
-    // =========================
-    // BATAL PEMINJAMAN
-    // =========================
-    public function cancel(string $id)
+    public function adminDashboard()
     {
-        try {
-            $this->borrowingService->cancelBorrowing($id);
-            return back()->with('success', 'Peminjaman berhasil dibatalkan dan stok dikembalikan.');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+        $totalBuku     = $this->bookService->countTotal();
+        $totalDipinjam = $this->borrowingService->countByStatus('dipinjam');
+        $totalSelesai  = $this->borrowingService->countByStatus('dikembalikan');
+        $recentBooks   = $this->bookService->getRecent(5);
+        return view('admin.dashboard', compact('totalBuku', 'totalDipinjam', 'totalSelesai', 'recentBooks'));
+    }
+
+    public function anggota(Request $request)
+    {
+        $query = Book::query();
+        if ($request->search) {
+            $query->where('judul', 'like', '%' . $request->search . '%')
+                  ->orWhere('penulis', 'like', '%' . $request->search . '%');
         }
-    }
-
-    // =========================
-    // LAPORAN
-    // =========================
-    public function laporan(Request $request)
-    {
-        $bulan = $request->bulan ?? date('m');
-        $tahun = $request->tahun ?? date('Y');
-
-        $borrowings = Borrowing::with(['user', 'book'])
-            ->whereMonth('tanggal_pinjam', $bulan)
-            ->whereYear('tanggal_pinjam', $tahun)
-            ->latest()
-            ->get();
-
-        return view('admin.laporan.index', compact('borrowings', 'bulan', 'tahun'));
-    }
-
-    // =========================
-    // EXPORT PDF
-    // =========================
-    public function exportPdf(Request $request)
-    {
-        $bulan = $request->bulan ?? date('m');
-        $tahun = $request->tahun ?? date('Y');
-
-        $borrowings = Borrowing::with(['user', 'book'])
-            ->whereMonth('tanggal_pinjam', $bulan)
-            ->whereYear('tanggal_pinjam', $tahun)
-            ->get();
-
-        $pdf = Pdf::loadView('admin.laporan.pdf', compact('borrowings', 'bulan', 'tahun'));
-
-        return $pdf->download('laporan-peminjaman.pdf');
+        $books = $query->latest()->paginate(10);
+        return view('anggota.katalog', compact('books'));
     }
 }
