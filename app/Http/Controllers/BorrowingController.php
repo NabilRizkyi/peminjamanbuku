@@ -3,33 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Models\Borrowing;
 use App\Models\Book;
-use App\Models\User; // 
-use Carbon\Carbon;
-
-use App\Services\Borrowing\BorrowingInterface;
-
-class BorrowingController extends Controller
-{
-    private BorrowingInterface $borrowingService;
-
-    public function __construct(BorrowingInterface $borrowingService)
-    {
-        $this->borrowingService = $borrowingService;
-    }
-
-    public function index()
-    {
-        $borrowings = $this->borrowingService->getByUserId((string) auth()->id());
-        return view('anggota.riwayat', compact('borrowings'));
-    }
-
-    public function store(Request $request, string $id)
-
-use App\Models\Borrowing;
-use App\Models\Book;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -45,16 +21,14 @@ class BorrowingController extends Controller
             $borrowings = Borrowing::with(['user', 'book'])
                 ->latest()
                 ->paginate(10);
+
+            return view('admin.borrowings.index', compact('borrowings'));
         } else {
             $borrowings = Borrowing::with(['book'])
                 ->where('user_id', Auth::id())
                 ->latest()
                 ->paginate(10);
-        }
 
-        if (Auth::user()->role == 'admin') {
-            return view('admin.borrowings.index', compact('borrowings'));
-        } else {
             return view('anggota.riwayat', compact('borrowings'));
         }
     }
@@ -63,19 +37,11 @@ class BorrowingController extends Controller
     // PINJAM BUKU
     // =========================
     public function store(Request $request)
-
     {
         $request->validate([
             'book_id' => 'required|exists:books,id',
             'durasi'  => 'required|integer|min:1|max:30'
         ]);
-
-        try {
-            $this->borrowingService->createBorrowing((string) auth()->id(), $id, (int) $request->durasi);
-            return redirect()->route('riwayat')->with('success', 'Pengajuan peminjaman berhasil dikirim. Menunggu persetujuan admin.');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
 
         $durasi = (int) $request->durasi;
         $book   = Book::findOrFail($request->book_id);
@@ -86,7 +52,7 @@ class BorrowingController extends Controller
 
         $token   = 'TRX-' . strtoupper(Str::random(8));
         $now     = now();
-        $expired = $now->copy()->addDay(); // [FIX] Dipakai di token_expired_at
+        $expired = $now->copy()->addDay();
 
         Borrowing::create([
             'user_id'          => Auth::id(),
@@ -97,7 +63,7 @@ class BorrowingController extends Controller
             'status'           => 'menunggu',
             'denda'            => 0,
             'token'            => $token,
-            'token_expired_at' => $expired, // [FIX] Bukan null lagi
+            'token_expired_at' => $expired,
             'token_used'       => false,
         ]);
 
@@ -114,7 +80,6 @@ class BorrowingController extends Controller
     {
         $borrowing = Borrowing::findOrFail($id);
 
-        // [FIX] Pastikan hanya pemilik yang bisa kembalikan
         if ($borrowing->user_id !== Auth::id()) {
             abort(403, 'Akses tidak diizinkan');
         }
@@ -128,7 +93,6 @@ class BorrowingController extends Controller
         $lateDays = $dueDate->diffInDays($today, false);
         $denda    = $lateDays > 0 ? $lateDays * 1000 : 0;
 
-        // Kembalikan stok
         $borrowing->book->increment('stok');
 
         $borrowing->update([
@@ -144,7 +108,6 @@ class BorrowingController extends Controller
     // =========================
     public function approve($id)
     {
-        // [FIX] Hanya admin yang boleh approve
         if (Auth::user()->role !== 'admin') {
             abort(403, 'Akses tidak diizinkan');
         }
