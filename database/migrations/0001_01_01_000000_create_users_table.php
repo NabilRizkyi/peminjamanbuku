@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -18,18 +15,15 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-<<<<<<< HEAD
-            $table->string('role')->default('anggota'); // Admin / Anggota. Pakai string, bukan enum.
             
-            // Kolom profil anggota
+            // Pilih versi ini (HEAD) - pakai string lebih fleksibel dari enum di PostgreSQL
+            $table->string('role')->default('anggota');
+            
             $table->string('no_hp')->nullable();
             $table->text('alamat')->nullable();
             $table->string('nomor_anggota')->nullable()->unique();
             $table->string('photo')->nullable();
 
-=======
-            $table->enum('role', ['admin', 'anggota'])->default('anggota');
->>>>>>> 4cbfe0c1ccd138ae29ba694be9cba2bd5ba3058e
             $table->rememberToken();
             $table->timestamps();
         });
@@ -50,9 +44,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
