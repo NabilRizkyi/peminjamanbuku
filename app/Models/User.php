@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -9,8 +8,8 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
-    use HasUuids, HasFactory, Notifiable;
+    use HasUuids, HasFactory, Notifiable; // ← hapus duplikat
+
     protected $fillable = [
         'name',
         'email',
@@ -38,20 +37,19 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::creating(function ($user) {
-            // Default role is anggota if not specified
             if (empty($user->role)) {
                 $user->role = 'anggota';
             }
 
-            // Only generate nomor_anggota for anggota
             if ($user->role === 'anggota' && empty($user->nomor_anggota)) {
+                // ✅ Pakai max() lebih aman & efisien
                 $lastUser = self::where('role', 'anggota')
                                 ->whereNotNull('nomor_anggota')
-                                ->latest('created_at')
+                                ->orderByRaw("CAST(SUBSTRING(nomor_anggota, 4) AS INTEGER) DESC")
                                 ->first();
 
                 $lastNumber = 0;
-                if ($lastUser) {
+                if ($lastUser && $lastUser->nomor_anggota) {
                     $lastNumber = intval(substr($lastUser->nomor_anggota, 3));
                 }
 
