@@ -3,15 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-<<<<<<< HEAD
+
 use App\Models\Borrowing;
 use App\Models\Book;
 use App\Models\User; // 
 use Carbon\Carbon;
-=======
-<<<<<<< HEAD
+
 use App\Services\Borrowing\BorrowingInterface;
->>>>>>> 856d5ac925529bc4eaa6bd5b89b64563fe18f814
 
 class BorrowingController extends Controller
 {
@@ -29,7 +27,7 @@ class BorrowingController extends Controller
     }
 
     public function store(Request $request, string $id)
-=======
+
 use App\Models\Borrowing;
 use App\Models\Book;
 use Carbon\Carbon;
@@ -54,10 +52,6 @@ class BorrowingController extends Controller
                 ->paginate(10);
         }
 
-        // [FIX] Kalkulasi denda dilakukan on-the-fly di sini tanpa update DB.
-        // Untuk update DB otomatis, gunakan Laravel Scheduler di App\Console\Kernel.
-        // Contoh scheduler: $schedule->call(function () { ... })->daily();
-
         if (Auth::user()->role == 'admin') {
             return view('admin.borrowings.index', compact('borrowings'));
         } else {
@@ -69,21 +63,20 @@ class BorrowingController extends Controller
     // PINJAM BUKU
     // =========================
     public function store(Request $request)
->>>>>>> 4cbfe0c1ccd138ae29ba694be9cba2bd5ba3058e
+
     {
         $request->validate([
             'book_id' => 'required|exists:books,id',
             'durasi'  => 'required|integer|min:1|max:30'
         ]);
 
-<<<<<<< HEAD
         try {
             $this->borrowingService->createBorrowing((string) auth()->id(), $id, (int) $request->durasi);
             return redirect()->route('riwayat')->with('success', 'Pengajuan peminjaman berhasil dikirim. Menunggu persetujuan admin.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
-=======
+
         $durasi = (int) $request->durasi;
         $book   = Book::findOrFail($request->book_id);
 
@@ -108,7 +101,6 @@ class BorrowingController extends Controller
             'token_used'       => false,
         ]);
 
-        // [FIX] Kurangi stok setelah peminjaman dibuat
         $book->decrement('stok');
 
         return redirect()->route('riwayat')
@@ -174,6 +166,5 @@ class BorrowingController extends Controller
         ]);
 
         return back()->with('success', 'Disetujui + token dibuat');
->>>>>>> 4cbfe0c1ccd138ae29ba694be9cba2bd5ba3058e
     }
 }
