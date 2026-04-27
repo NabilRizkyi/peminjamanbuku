@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('borrowings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('book_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('book_id')->constrained()->cascadeOnDelete(); // tetap foreignId jika books.id pakai bigint
             $table->dateTime('tanggal_pinjam');
             $table->dateTime('tanggal_kembali')->nullable();
-            $table->integer('durasi')->default(1); // [FIX] Kolom ini wajib ada
+            $table->integer('durasi')->default(1);
             $table->dateTime('token_expired_at')->nullable();
             $table->string('token')->nullable();
             $table->boolean('token_used')->default(0);
