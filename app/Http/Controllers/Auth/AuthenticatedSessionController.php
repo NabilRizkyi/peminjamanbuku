@@ -30,17 +30,6 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        // Cek status approval — hanya untuk non-admin
-        if ($user->role !== 'admin' && strtolower(trim($user->status)) !== 'approved') {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            return back()->withErrors([
-                'email' => 'Akun kamu belum disetujui oleh admin.',
-            ]);
-        }
-
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
