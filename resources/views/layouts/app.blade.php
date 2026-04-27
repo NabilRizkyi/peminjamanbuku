@@ -5,15 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library – Aplikasi Peminjaman Buku</title>
 
-    {{-- Bootstrap --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    {{-- Font: Inter --}}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    {{-- Bootstrap Icons --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    {{-- Phosphor Icons --}}
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -49,7 +43,6 @@
             color: var(--text-primary);
         }
 
-        /* ── SIDEBAR ── */
         .sidebar {
             width: var(--sidebar-width);
             height: 100vh;
@@ -104,7 +97,6 @@
             margin-top: -2px;
         }
 
-        /* ── NAV SECTION ── */
         .sidebar-nav {
             flex: 1;
             padding: 16px 12px;
@@ -159,7 +151,6 @@
             font-weight: 600;
         }
 
-        /* ── SIDEBAR BOTTOM ── */
         .sidebar-bottom {
             padding: 16px 12px;
             border-top: 1px solid rgba(255,255,255,0.06);
@@ -221,16 +212,13 @@
             transition: all 0.18s ease;
         }
 
-        .btn-sm {
-    border-radius: 8px;
-}
+        .btn-sm { border-radius: 8px; }
 
         .btn-logout:hover {
             background: rgba(239, 68, 68, 0.2);
             color: #f87171;
         }
 
-        /* ── CONTENT AREA ── */
         .content-wrapper {
             margin-left: var(--sidebar-width);
             min-height: 100vh;
@@ -238,21 +226,18 @@
             flex-direction: column;
         }
 
-        /* ── MAIN CONTENT ── */
         .main-content {
             padding: 28px;
             flex: 10;
             margin-left: 270px;
         }
 
-        /* ── CARDS ── */
         .card {
             border: 1px solid var(--border) !important;
             box-shadow: var(--shadow) !important;
             border-radius: var(--radius) !important;
         }
 
-        /* ── BUTTONS ── */
         .btn-primary {
             background: var(--primary) !important;
             border-color: var(--primary) !important;
@@ -270,37 +255,15 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
         }
 
-        .btn-success {
+        .btn-success, .btn-warning, .btn-danger, .btn-secondary {
             font-weight: 500;
             font-size: 14px;
             border-radius: 8px !important;
             transition: all 0.18s ease;
         }
 
-        .btn-warning {
-            font-weight: 500;
-            font-size: 14px;
-            margin: 4px;
-            border-radius: 8px !important;
-            transition: all 0.18s ease;
-        }
+        .btn-warning, .btn-danger { margin: 4px; }
 
-        .btn-danger {
-            font-weight: 500;
-            font-size: 14px;
-            margin: 4px;
-            border-radius: 8px !important;
-            transition: all 0.18s ease;
-        }
-
-        .btn-secondary {
-            font-weight: 500;
-            font-size: 14px;
-            border-radius: 8px !important;
-            transition: all 0.18s ease;
-        }
-
-        /* ── FORM CONTROLS ── */
         .form-control, .form-select {
             border-radius: 8px !important;
             border: 1px solid var(--border) !important;
@@ -322,10 +285,7 @@
             margin-bottom: 6px;
         }
 
-        /* ── TABLE ── */
-        .table {
-            font-size: 14px;
-        }
+        .table { font-size: 14px; }
 
         .table thead th {
             font-size: 12px;
@@ -343,19 +303,10 @@
             vertical-align: middle;
         }
 
-        .table tbody tr:last-child td {
-            border-bottom: none !important;
-        }
+        .table tbody tr:last-child td { border-bottom: none !important; }
+        .table tbody tr:hover td { background: #f8fafc; }
+        .table td { vertical-align: middle; }
 
-        .table tbody tr:hover td {
-            background: #f8fafc;
-        }
-
-        .table td {
-    vertical-align: middle;
-}
-
-        /* ── BADGES ── */
         .badge {
             font-size: 11px;
             font-weight: 600;
@@ -364,7 +315,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* ── PAGE HEADER ── */
         .page-header {
             display: flex;
             align-items: center;
@@ -385,7 +335,6 @@
             margin: 4px 0 0;
         }
 
-        /* ── ALERT ── */
         .alert {
             border-radius: 10px !important;
             border: none !important;
@@ -411,7 +360,6 @@
             border-left: 4px solid #ef4444 !important;
         }
 
-        /* ── STAT CARD ── */
         .stat-card {
             background: white;
             border-radius: var(--radius);
@@ -453,22 +401,17 @@
             margin-top: 4px;
         }
 
-        /* ── SCROLLBAR ── */
         .sidebar-nav::-webkit-scrollbar { width: 4px; }
         .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
         .sidebar-nav::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
-        /* ── PAGE FADE ── */
         .main-content { animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-{{-- ═══════════════════════════════════════ SIDEBAR ═══════════════════════════════════════ --}}
 <div class="sidebar">
-
-    {{-- HEADER --}}
     <div class="sidebar-header">
         <a href="{{ route('dashboard') }}" class="sidebar-logo">
             <div class="sidebar-logo-icon"><i class="ph-fill ph-book-open-text"></i></div>
@@ -479,7 +422,6 @@
         </a>
     </div>
 
-    {{-- NAV --}}
     <div class="sidebar-nav">
 
         @if(auth()->user()->role === 'admin')
@@ -504,23 +446,18 @@
                 <i class="ph-duotone ph-clipboard-text"></i>
                 Data Peminjaman
             </a>
-<<<<<<< HEAD
-            
-=======
 
             <a href="{{ route('anggota.index') }}"
-   class="nav-link-item {{ request()->routeIs('anggota.*') ? 'active' : '' }}">
-    <i class="ph-duotone ph-users"></i>
-    Kelola Anggota
-</a>
+               class="nav-link-item {{ request()->routeIs('anggota.*') ? 'active' : '' }}">
+                <i class="ph-duotone ph-users"></i>
+                Kelola Anggota
+            </a>
 
-<a href="{{ route('admin.laporan') }}"
-   class="nav-link-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
-    <i class="ph-duotone ph-chart-bar"></i>
-    Report
-</a>
-
->>>>>>> 856d5ac925529bc4eaa6bd5b89b64563fe18f814
+            <a href="{{ route('admin.laporan') }}"
+               class="nav-link-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
+                <i class="ph-duotone ph-chart-bar"></i>
+                Report
+            </a>
         @endif
 
         @if(auth()->user()->role === 'anggota')
@@ -537,8 +474,6 @@
                 <i class="ph-duotone ph-clock-counter-clockwise"></i>
                 Riwayat Peminjaman
             </a>
-        
-
         @endif
 
         <div class="nav-section-label">Akun</div>
@@ -551,7 +486,6 @@
 
     </div>
 
-    {{-- BOTTOM --}}
     <div class="sidebar-bottom">
         <div class="user-info">
             <div class="user-avatar">
@@ -571,14 +505,10 @@
             </button>
         </form>
     </div>
-
 </div>
 
-    {{-- MAIN --}}
-    <div class="main-content">
-        @yield('content')
-    </div>
-
+<div class="main-content">
+    @yield('content')
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
