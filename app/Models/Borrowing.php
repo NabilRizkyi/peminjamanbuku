@@ -19,14 +19,11 @@ class Borrowing extends Model
         'status',
         'denda',
         'token',
-<<<<<<< HEAD
         'token_expired_at', // 
         'token_used',       // 
-=======
         'token_expired_at',
         'token_used',
         'token_approved_at',
->>>>>>> 856d5ac925529bc4eaa6bd5b89b64563fe18f814
     ];
 
     protected $casts = [
