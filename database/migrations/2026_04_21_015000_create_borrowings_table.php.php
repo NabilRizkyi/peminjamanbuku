@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('borrowings', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('book_id')->constrained()->cascadeOnDelete(); // tetap foreignId jika books.id pakai bigint
+            $table->foreignUuid('book_id')->constrained()->cascadeOnDelete();
             $table->dateTime('tanggal_pinjam');
             $table->dateTime('tanggal_kembali')->nullable();
             $table->integer('durasi')->default(1);
