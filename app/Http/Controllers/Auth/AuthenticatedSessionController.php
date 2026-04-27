@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -25,14 +24,22 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+
+        // Regenerate session SEBELUM apapun, untuk keamanan & stabilitas
+        $request->session()->regenerate();
+
         $user = Auth::user();
 
-if ($user->role !== 'admin' && strtolower(trim($user->status)) !== 'approved') {
-    Auth::logout();
-    return back()->with('error', 'Akun belum disetujui admin');
-}
+        // Cek status approval — hanya untuk non-admin
+        if ($user->role !== 'admin' && strtolower(trim($user->status)) !== 'approved') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        $request->session()->regenerate();
+            return back()->withErrors([
+                'email' => 'Akun kamu belum disetujui oleh admin.',
+            ]);
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -43,9 +50,7 @@ if ($user->role !== 'admin' && strtolower(trim($user->status)) !== 'approved') {
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');
