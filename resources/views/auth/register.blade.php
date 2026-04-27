@@ -379,12 +379,6 @@
             <a href="{{ route('login') }}">Masuk di sini</a>
         </div>
 
-        {{-- FIX 8: pakai class, bukan inline style hardcode --}}
-        <div class="auth-info-box">
-            <i class="bi bi-info-circle me-1"></i>
-            Setelah daftar, akun kamu harus disetujui admin terlebih dahulu.
-        </div>
-
     </div>
 </div>
 
