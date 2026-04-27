@@ -55,13 +55,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/validasi-token', [AdminBorrowingController::class, 'validasiToken'])
             ->name('admin.validasi.token');
-
-        Route::get('/admin/anggota', [UserController::class, 'index'])->name('anggota.index');
-        Route::get('/admin/anggota/create', [UserController::class, 'create'])->name('anggota.create');
-        Route::get('/anggota/{id}/edit', [AnggotaController::class, 'edit'])->name('anggota.edit');
-        Route::put('/anggota/{id}', [AnggotaController::class, 'update'])->name('anggota.update');
-        Route::post('/admin/anggota/store', [UserController::class, 'store'])->name('anggota.store');
-        Route::delete('/admin/anggota/{id}', [UserController::class, 'destroy'])->name('anggota.destroy');
     });
 
 

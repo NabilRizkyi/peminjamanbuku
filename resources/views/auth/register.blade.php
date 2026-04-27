@@ -26,7 +26,7 @@
         .auth-wrapper {
             display: flex;
             width: 100%;
-            max-width: 900px;
+            max-width: 500px;
             background: white;
             border-radius: 20px;
             overflow: hidden;
@@ -185,30 +185,6 @@
 <body>
 
 <div class="auth-wrapper">
-
-    {{-- SIDE --}}
-    <div class="auth-side">
-        <div class="auth-side-logo">
-            <div class="auth-side-logo-icon"><i class="bi bi-book-half"></i></div>
-            <div>
-                <div class="auth-side-brand">Library</div>
-                <div class="auth-side-tagline">Perpustakaan Digital</div>
-            </div>
-        </div>
-
-        <div>
-            <div class="auth-side-headline">
-                Bergabung dengan<br>Library hari ini! <i class="bi bi-rocket-takeoff"></i>
-            </div>
-            <div class="auth-side-desc">
-                Daftar sekarang dan nikmati kemudahan akses koleksi buku perpustakaan kapan saja dan di mana saja.
-            </div>
-        </div>
-
-        <div style="font-size:12px; opacity:0.6;">
-            © {{ date('Y') }} Library. Semua hak dilindungi.
-        </div>
-    </div>
 
     {{-- FORM --}}
     <div class="auth-main">

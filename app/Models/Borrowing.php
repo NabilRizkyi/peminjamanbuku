@@ -16,8 +16,8 @@ class Borrowing extends Model
         'status',
         'denda',
         'token',
-        'token_expired_at', // ✅ WAJIB DITAMBAH
-        'token_used',       // ✅ optional tapi penting
+        'token_expired_at', // 
+        'token_used',       // 
     ];
 
     protected $casts = [

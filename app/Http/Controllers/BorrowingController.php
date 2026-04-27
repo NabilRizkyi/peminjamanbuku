@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Borrowing;
 use App\Models\Book;
-use App\Models\User; // ✅ HARUS DI SINI
+use App\Models\User; // 
 use Carbon\Carbon;
 
 class BorrowingController extends Controller

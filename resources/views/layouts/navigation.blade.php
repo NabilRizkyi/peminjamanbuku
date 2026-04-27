@@ -32,13 +32,6 @@
                             Data Peminjaman
                         </x-nav-link>
 
-                        <x-nav-link 
-                            :href="route('anggota.index')" 
-                            :active="request()->routeIs('anggota.*')">
-                            Kelola Anggota
-                        </x-nav-link>
-
-
                     @endif
 
 
@@ -126,12 +119,6 @@
         :href="route('admin.borrowings')" 
         :active="request()->routeIs('admin.borrowings')">
         Data Peminjaman
-    </x-responsive-nav-link>
-
-    <x-responsive-nav-link 
-        :href="route('anggota.index')" 
-        :active="request()->routeIs('anggota.*')">
-        Kelola Anggota
     </x-responsive-nav-link>
 
 @endif

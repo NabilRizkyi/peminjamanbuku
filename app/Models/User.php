@@ -10,10 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-
-    /**
-     * Kolom yang boleh diisi
-     */
+    
     protected $fillable = [
         'name',
         'email',

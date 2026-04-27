@@ -19,7 +19,7 @@
 
     <style>
         :root {
-            --sidebar-bg: #0f172a;
+            --sidebar-bg: #263b3f;
             --sidebar-hover: #1e293b;
             --sidebar-active: #2563eb;
             --sidebar-active-bg: rgba(37, 99, 235, 0.15);
@@ -60,7 +60,7 @@
             display: flex;
             flex-direction: column;
             z-index: 100;
-            border-right: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .sidebar-header {
@@ -234,45 +234,11 @@
             flex-direction: column;
         }
 
-        /* ── TOP BAR ── */
-        .topbar {
-            background: white;
-            border-bottom: 1px solid var(--border);
-            padding: 14px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .topbar-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .topbar-badge {
-            font-size: 12px;
-            font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background: #eff6ff;
-            color: #2563eb;
-            border: 1px solid #dbeafe;
-        }
-
         /* ── MAIN CONTENT ── */
         .main-content {
             padding: 28px;
-            flex: 1;
+            flex: 10;
+            margin-left: 270px;
         }
 
         /* ── CARDS ── */
@@ -530,12 +496,7 @@
                 <i class="ph-duotone ph-clipboard-text"></i>
                 Data Peminjaman
             </a>
-
-            <a href="{{ route('anggota.index') }}"
-   class="nav-link-item {{ request()->routeIs('anggota.*') ? 'active' : '' }}">
-    <i class="ph-duotone ph-users"></i>
-    Kelola Anggota
-</a>
+            
         @endif
 
         @if(auth()->user()->role === 'anggota')
@@ -588,22 +549,6 @@
     </div>
 
 </div>
-
-{{-- ═══════════════════════════ CONTENT ═══════════════════════════ --}}
-<div class="content-wrapper">
-
-    {{-- TOP BAR --}}
-    <div class="topbar">
-        <div class="topbar-title">
-            @yield('page-title', 'Dashboard')
-        </div>
-        <div class="topbar-right">
-            <span class="topbar-badge">
-                <i class="bi bi-person-fill me-1"></i>
-                {{ auth()->user()->name }}
-            </span>
-        </div>
-    </div>
 
     {{-- MAIN --}}
     <div class="main-content">
