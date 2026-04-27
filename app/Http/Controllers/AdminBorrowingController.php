@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-<<<<<<< HEAD
+
 use App\Services\Borrowing\BorrowingInterface;
-=======
+
 use App\Models\Borrowing;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -27,15 +27,9 @@ class AdminBorrowingController extends Controller
         return view('admin.borrowings.index', compact('borrowings'));
     }
 
-<<<<<<< HEAD
-    // =========================================================
-    // APPROVE
-    // =========================================================
     public function approve(string $id)
-=======
-    // ✅ RETURN BUKU + DENDA
+    // RETURN BUKU + DENDA
     public function return($id)
->>>>>>> 4cbfe0c1ccd138ae29ba694be9cba2bd5ba3058e
     {
         try {
             $result = $this->borrowingService->approveBorrowing($id);
@@ -46,10 +40,8 @@ class AdminBorrowingController extends Controller
         }
     }
 
-<<<<<<< HEAD
-    // =========================================================
     // VALIDASI TOKEN
-    // =========================================================
+
     public function validasiToken(Request $request)
     {
         $request->validate([
@@ -93,7 +85,6 @@ class AdminBorrowingController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
-=======
         // 🔥 HITUNG TELAT (POSITIF = TELAT)
         $telat = Carbon::parse($borrowing->tanggal_kembali_rencana)
             ->diffInDays(now(), false);
