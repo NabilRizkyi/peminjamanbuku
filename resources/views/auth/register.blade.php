@@ -195,8 +195,6 @@
 
 <div class="auth-wrapper">
 
-<<<<<<< HEAD
-=======
     {{-- SIDE --}}
     <div class="auth-side">
         <div class="auth-side-logo">
@@ -226,8 +224,6 @@
         {{ session('success') }}
     </div>
 @endif
-
->>>>>>> 856d5ac925529bc4eaa6bd5b89b64563fe18f814
     {{-- FORM --}}
     <div class="auth-main">
 
